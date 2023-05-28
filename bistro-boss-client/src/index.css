@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.carousel .thumbs {
+    text-align: center;
+}
+
+.drawer-side a.active {
+    color: white;
+}
+
+.drawer-side a {
+    background-color: transparent;
+}

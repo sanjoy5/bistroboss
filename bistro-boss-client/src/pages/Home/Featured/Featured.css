@@ -1,0 +1,4 @@
+.featured-items {
+    background-image: url('../../../assets/home/featured.jpg');
+    filter: brightness(0.8);
+}
