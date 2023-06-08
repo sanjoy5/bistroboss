@@ -57,7 +57,6 @@ const FoodCard = ({ item }) => {
                 <figure><img src={image} alt="Items" /></figure>
                 <p className="bg-slate-900 text-white absolute right-0 mt-5 mr-7 py-1 px-2">${price}</p>
                 <div className="card-body">
-                    <p>song</p>
                     <h2 className="card-title mx-auto">{name}</h2>
                     <p className='pt-2 pb-4'>{recipe.slice(0, 70)}...</p>
                     <div className="card-actions justify-center">

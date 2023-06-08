@@ -4,11 +4,13 @@ import { useAuthContext } from '../../providers/AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2'
+import SocialLogin from '../Shared/SocialLogin/SocialLogin';
 
 
 const Login = () => {
     const { signIn } = useAuthContext()
     const [disabled, setDisabled] = useState(true)
+    const [error, setError] = useState('')
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -39,7 +41,7 @@ const Login = () => {
                 navigate(from, { replace: true })
             })
             .catch(error => {
-                console.log(error.message);
+                setError(error.message)
             })
     }
 
@@ -88,13 +90,19 @@ const Login = () => {
                             </div>
                             {/* todo: make button disabled for captcha  */}
                             <div className="form-control mt-6">
-                                <input disabled={false} type="submit" value="Login" className="btn btn-primary" />
+                                <input disabled={disabled} type="submit" value="Login" className="btn btn-primary" />
                             </div>
 
                         </form>
+                        {
+                            error && <label className="label">
+                                <p className="text-sm text-red-500">{error}</p>
+                            </label>
+                        }
                         <label className="label">
                             <p className="text-sm">New to BistroBoss? <Link to="/signup" className="link link-hover" >Sign Up</Link> </p>
                         </label>
+                        <SocialLogin />
                     </div>
                 </div>
             </div>

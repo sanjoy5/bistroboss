@@ -1,16 +1,17 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
-import useCart from '../../../hooks/useCart';
+import SectionTitle from '../../Shared/SectionTitle/SectionTitle';
+import useMenu from '../../../hooks/useMenu';
 import { FaTrashAlt } from 'react-icons/fa';
-import Swal from 'sweetalert2'
-import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
-const MyCart = () => {
-    const [cart, refetch] = useCart()
-    const total = cart.reduce((sum, item) => item.price + sum, 0)
+const ManageItems = () => {
+    const [menu, , refetch] = useMenu();
+    const [axiosSecure] = useAxiosSecure();
 
-    const handleDelete = (item) => {
-
+    const handleDelete = item => {
+        console.log('item', typeof (item._id));
+        console.log('item', item);
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -21,13 +22,12 @@ const MyCart = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`http://127.0.0.1:5000/carts/${item._id}`, {
-                    method: 'DELETE'
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.deletedCount > 0) {
-                            refetch()
+
+                axiosSecure.delete(`/menu/${item._id}`)
+                    .then(res => {
+                        console.log('deleted res', res.data);
+                        if (res.data.deletedCount > 0) {
+                            refetch();
                             Swal.fire(
                                 'Deleted!',
                                 'Your file has been deleted.',
@@ -35,41 +35,36 @@ const MyCart = () => {
                             )
                         }
                     })
+
             }
         })
-
     }
 
     return (
-        <div className='w-full'>
-            <Helmet>
-                <title>Bistro Boss | My Cart</title>
-            </Helmet>
-            <div className="uppercase font-semibold h-16 items-center flex justify-evenly">
-                <h2 className='text-3xl'>Total Items: {cart.length}</h2>
-                <h2 className='text-3xl'>Total Price: ${parseFloat(total.toFixed(2))}</h2>
-                <Link to='/dashboard/payment' className="btn btn-warning btn-sm">PAY</Link>
-            </div>
+        <div className='w-full px-4 md:px-10'>
+            <SectionTitle heading='Manage All Items' subHeading='Hurry Up' ></SectionTitle>
 
-            <div className="overflow-x-auto w-full">
+            <div className="overflow-x-auto">
                 <table className="table w-full">
                     {/* head */}
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Food</th>
-                            <th>Item name</th>
+                            <th>Item</th>
+                            <th>Category</th>
                             <th>Price</th>
-                            <th>Action</th>
+                            <th>Update</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
+
                         {
-                            cart.map((item, index) => (
+                            menu.map((item, index) => (
                                 <tr key={item._id}>
-                                    <td>
+                                    <th>
                                         {index + 1}
-                                    </td>
+                                    </th>
                                     <td>
                                         <div className="flex items-center space-x-3">
                                             <div className="avatar">
@@ -77,30 +72,35 @@ const MyCart = () => {
                                                     <img src={item.image} alt="Avatar Tailwind CSS Component" />
                                                 </div>
                                             </div>
+                                            <div>
+                                                <div className="font-bold">{item.name}</div>
+
+                                            </div>
                                         </div>
                                     </td>
                                     <td>
-                                        {item.name}
+                                        {item.category}
                                     </td>
-                                    <td className='text-right'>${item.price}</td>
+                                    <td >{item.price}</td>
                                     <td>
-                                        <button onClick={() => handleDelete(item)} className="btn btn-ghost bg-red-600 text-white">
-                                            <FaTrashAlt className='text-xl' />
-                                        </button>
+                                        <button className="btn btn-ghost btn-xs">Update</button>
+                                    </td>
+                                    <td>
+                                        <button onClick={() => handleDelete(item)} className="btn btn-ghost bg-red-600  text-white"><FaTrashAlt></FaTrashAlt></button>
                                     </td>
                                 </tr>
-
                             ))
                         }
 
-                    </tbody>
 
+                    </tbody>
 
                 </table>
             </div>
-
         </div>
+
+
     );
 };
 
-export default MyCart;
+export default ManageItems;
